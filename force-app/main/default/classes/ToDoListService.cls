@@ -28,7 +28,14 @@ public static String getProjectStatus (List <Task__c> tasks, Date projectPlanedE
 public static void createPerson(String fName, String LName){
         Person__c insertNewPerson = new Person__c (First_Name__c=fName,Last_Name__c=LName);
         insert insertNewPerson;
-        //Database.SaveResult sr = Database(insertNewPerson,false);
+}
+
+/*create new Task with Project and Person shown in parameters, 
+Start_Day__c must be set today's date, Status - draft (do not insert into DB)*/
+
+public static void startNewTask (Id projectId, Id personId){
+          Task__c insertTask = new Task__c (Project__c=projectId,Person__c=personId,Start_Date__c=Datetime.now(),Status__c='Draft');
+          insert insertNewPerson; 
 }
 
 }
