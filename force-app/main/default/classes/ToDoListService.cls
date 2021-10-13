@@ -47,5 +47,16 @@ public static void updateTaskStatusesForProject(Id projectId, String newStatus){
         update t;
     }
 }
+//method deletes Projects with Ids passed in parameters and tasks related to these Projects
+public static void deleteProjects (Set<Id> projectId){
+    List <Task__c> tasksDeleted =[SELECT Id FROM TASK__C where Project__c In : projectId];
+    List <Project__c> projectDeleted =[SELECT Id FROM Project__C where Id In : projectId];
+    for (Task__c t: tasksDeleted){
+        Delete t;
+    }
+    for (Project__C p: projectDeleted){
+        Delete p;
+    }
+}
 
 }
