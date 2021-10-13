@@ -24,4 +24,11 @@ public static String getProjectStatus (List <Task__c> tasks, Date projectPlanedE
     return returnStatus;
 
 }
+//methods inserts into DB new Person__c with FName and LName provided in parameters
+public static void createPerson(String fName, String LName){
+        Person__c insertNewPerson = new Person__c (First_Name__c=fName,Last_Name__c=LName);
+        insert insertNewPerson;
+        //Database.SaveResult sr = Database(insertNewPerson,false);
+}
+
 }

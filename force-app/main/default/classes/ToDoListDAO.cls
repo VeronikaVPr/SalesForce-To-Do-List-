@@ -1,5 +1,5 @@
 public class ToDoListDAO {
-//deploy from git
+
     //get Person__c by Id
     public static void getPerson(Id personId){
         List <Person__c> findPerson =[SELECT Full_Name__c FROM Person__c where ID=:personId];
