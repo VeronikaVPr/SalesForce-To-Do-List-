@@ -34,8 +34,18 @@ public static void createPerson(String fName, String LName){
 Start_Day__c must be set today's date, Status - draft (do not insert into DB)*/
 
 public static void startNewTask (Id projectId, Id personId){
-          Task__c insertTask = new Task__c (Project__c=projectId,Person__c=personId,Start_Date__c=Datetime.now(),Status__c='Draft');
-          insert insertNewPerson; 
+          Date myDT = Date.today();
+          Task__c insertTask = new Task__c (Project__c=projectId,Person__c=personId,Start_Date__c=myDT,Status__c='Draft');
+          insert insertTask; 
+}
+
+//Update statuses for all tasks of specified project
+public static void updateTaskStatusesForProject(Id projectId, String newStatus){
+    List <Task__c> tasks =[SELECT Status__c,Id FROM TASK__C where Project__c= projectId];
+    for (Task__c t: tasks){
+        t.status__c=newStatus;
+        update t;
+    }
 }
 
 }
