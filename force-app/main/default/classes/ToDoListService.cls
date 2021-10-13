@@ -41,7 +41,7 @@ public static void startNewTask (Id projectId, Id personId){
 
 //Update statuses for all tasks of specified project
 public static void updateTaskStatusesForProject(Id projectId, String newStatus){
-    List <Task__c> tasks =[SELECT Status__c,Id FROM TASK__C where Project__c= projectId];
+    List <Task__c> tasks =[SELECT Status__c,Id FROM TASK__C where Project__c= : projectId];
     for (Task__c t: tasks){
         t.status__c=newStatus;
         update t;
