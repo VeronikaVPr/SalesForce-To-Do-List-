@@ -27,54 +27,31 @@ public static String getProjectStatus (List <Task__c> tasks, Date projectPlanedE
 //methods inserts into DB new Person__c with FName and LName provided in parameters
 public static void createPerson(String fName, String LName){
         Person__c insertNewPerson = new Person__c (First_Name__c=fName,Last_Name__c=LName);
-        try {
-          insert insertNewPerson;  
-        } catch (DMLException e) {            
-        }
-        
+          insert insertNewPerson;         
 }
 
 /*create new Task with Project and Person shown in parameters, 
-Start_Day__c must be set today's date, Status - draft (do not insert into DB)*/
+Start_Day__c must be set today's date, Status - draft */
 
 public static void startNewTask (Id projectId, Id personId){
           Date myDT = Date.today();
           Task__c insertTask = new Task__c (Project__c=projectId,Person__c=personId,Start_Date__c=myDT,Status__c='Draft');
-          try{
-            insert insertTask; 
-          }  catch (DMLException e) {            
-        }
-          
+          insert insertTask;          
 }
 
 //Update statuses for all tasks of specified project
 public static void updateTaskStatusesForProject(Id projectId, String newStatus){
     List <Task__c> tasks =[SELECT Status__c,Id FROM TASK__C where Project__c= : projectId];
+    
     for (Task__c t: tasks){
         t.status__c=newStatus;
-        try{
-        update t;
-        } catch (DMLException e) {            
-        }
     }
+    update tasks;
 }
 //method deletes Projects with Ids passed in parameters and tasks related to these Projects
 public static void deleteProjects (Set<Id> projectId){
-    List <Task__c> tasksDeleted =[SELECT Id FROM TASK__C where Project__c In : projectId];
-    List <Project__c> projectDeleted =[SELECT Id FROM Project__C where Id In : projectId];
-    for (Task__c t: tasksDeleted){
-        try {
-         Delete t;   
-        } catch (DMLException e) {            
-        }
-        
+        Delete [SELECT Id FROM TASK__C where Project__c In : projectId];
+        Delete [SELECT Id FROM Project__C where Id In : projectId];
     }
-    for (Project__C p: projectDeleted){
-        try{
-        Delete p;
-        } catch (DMLException e) {            
-        }
-    }
-}
 
 }
