@@ -28,6 +28,48 @@ public with sharing class TriggerHandler {
                 update people;
             }
     
+            public static void onAfterDelete(List<Task__c> oldListTasks) {
+//Update Person                                
+
+                   Set <Id> peopleId = new Set <Id> ();
+                for (Task__c t: oldListTasks){
+                    peopleId.add(t.Person__c);
+                }
+                 list <Person__c> people =[SELECT Id, Total_Amount_of_Projects__c, Total_Amount_of_Tasks__c FROM Person__c WHERE Id IN : peopleId];
+                 list <Task__c> taskAll = [SELECT  Id, Person__c,Project__C FROM Task__c WHERE Person__c IN : peopleId ];
+                 Integer newTotalTasks;
+                 Set <Id> project = new Set <Id> ();
+                    for (Person__c p: people){
+                        newTotalTasks =0;
+                        for(Task__c t: taskAll){
+                                                 If(p.Id == t.Person__c) {newTotalTasks++;
+                                                    project.add(t.Project__C);}
+                        }
+                        p.Total_Amount_of_Tasks__c = newTotalTasks;
+                        p.Total_Amount_of_Projects__c = project.size();
+                    }
+
+                    update people;
+//Update Project             
+             Set <Id> setProject = new Set <Id> ();
+             for (Task__c t: oldListTasks){
+             setProject.add(t.Project__C);
+}
+                    list <Project__c> projects = [SELECT Id, Status__c,Planned_End_Date__c FROM Project__C WHERE Id IN: setProject];
+    
+                    for (Project__C p: projects){
+                        List <Task__c> taskOneProect = new List <Task__c>();
+                        For (Task__c t: taskAll){
+                          if(p.Id == t.Project__C) taskOneProect.add(t);
+                        }
+                       
+                        p.Status__c=ToDoListService.getProjectStatus(taskOneProect,p.Planned_End_Date__c);
+                
+                        update projects;
+                    }
+                }
+        
+    
 
 //When the Task is Completed responsible Person can't be changed.
     public static void onBeforeUpdate(Map<Id, Task__c> oldTasksMap, List<Task__c> newTasks) {
