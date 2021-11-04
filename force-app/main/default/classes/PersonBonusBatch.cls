@@ -5,6 +5,7 @@ public class PersonBonusBatch implements Database.Batchable<sObject>,  Schedulab
         Id batchId = Database.executeBatch(MonthlyPersonBonusBatch);
    }
    
+   
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator(
@@ -13,7 +14,14 @@ public class PersonBonusBatch implements Database.Batchable<sObject>,  Schedulab
     }
 
     public void execute(Database.BatchableContext bc, List<Person__c> people) {
-        List <Task__c> tasks = [SELECT Id, Person__c, End_Date__c FROM Task__c WHERE Status__c = : 'Completed'];
+        Set <Id> peopleSet = new Set<Id>();
+        for (Person__c person : people){
+            peopleSet.add(person.Id);
+        }
+        List <Task__c> tasks = 
+            [SELECT Id, Person__c, End_Date__c 
+            FROM Task__c 
+            WHERE Status__c = : 'Completed' and Person__c IN :peopleSet];
         for (Person__c person : people){
             Integer countTasks = 0;
             for (Task__c task : tasks){
@@ -23,7 +31,7 @@ public class PersonBonusBatch implements Database.Batchable<sObject>,  Schedulab
                     countTasks++;
                 }
             }
-            person.Bonus__c=25*countTasks;
+        person.Bonus__c=25*countTasks;
         }    
         update people;
              
